@@ -58,7 +58,7 @@ public class Main extends Activity {
     protected void onStart() {
         // Intent intent = new Intent(this, CTAService.class);
         // startService(intent);
-        /*
+
         TrainLocator locator = new TrainLocator(this);
         locator.getNextArrival()
                 .observeOn(AndroidSchedulers.mainThread())
@@ -76,7 +76,7 @@ public class Main extends Activity {
                         showNextArrival(arrival);
                     }
                 });
-        */
+
         super.onStart();
     }
 

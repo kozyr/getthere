@@ -64,6 +64,7 @@ public class CTAService extends WearableListenerService {
 
     @Override
     public void onMessageReceived(MessageEvent messageEvent) {
+        Log.i(TAG, "Received message!");
         trainLocator.getNextArrival()
                 .observeOn(Schedulers.io())
                 .subscribe(new Subscriber<Arrival>() {

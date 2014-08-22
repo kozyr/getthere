@@ -1,6 +1,8 @@
 package kozyrenko.com.ctacatcher.model;
 
 import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -12,9 +14,8 @@ public class TrainStation {
     private String stationDesc;
     private double lat;
     private double lon;
-    private TrainStop there;
-    private TrainStop back;
-    private Set<TrainLine> lines;
+    private final List<TrainStop> stops;
+    private final Set<TrainLine> lines;
 
     public TrainStation(TrainStop stop) {
         this.stationId = stop.getParentStopId();
@@ -24,7 +25,13 @@ public class TrainStation {
         this.lon = stop.getLon();
         this.lines = new HashSet<TrainLine>();
         this.lines.addAll(stop.getLines());
-        there = stop;
+        stops = new LinkedList<TrainStop>();
+        stops.add(stop);
+    }
+
+    public void addStop(TrainStop stop) {
+        stops.add(stop);
+        lines.addAll(stop.getLines());
     }
 
     public String getStationName() {
@@ -63,10 +70,6 @@ public class TrainStation {
         return lines;
     }
 
-    public void setLines(Set<TrainLine> lines) {
-        this.lines = lines;
-    }
-
     public String getStationId() {
         return stationId;
     }
@@ -75,20 +78,9 @@ public class TrainStation {
         this.stationId = stationId;
     }
 
-    public TrainStop getThere() {
-        return there;
-    }
 
-    public void setThere(TrainStop there) {
-        this.there = there;
-    }
-
-    public TrainStop getBack() {
-        return back;
-    }
-
-    public void setBack(TrainStop back) {
-        this.back = back;
+    public List<TrainStop> getStops() {
+        return stops;
     }
 
     @Override
@@ -99,8 +91,7 @@ public class TrainStation {
         sb.append(", stationDesc='").append(stationDesc).append('\'');
         sb.append(", lat=").append(lat);
         sb.append(", lon=").append(lon);
-        sb.append(", there=").append(there);
-        sb.append(", back=").append(back);
+        sb.append(", stops=").append(stops);
         sb.append(", lines=").append(lines);
         sb.append('}');
         return sb.toString();

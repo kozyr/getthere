@@ -71,7 +71,7 @@ public class TrainLocator {
             public Observable<Arrival> call(Location location) {
                 TrainStation nearest = getNearestStation(location);
                 Log.i(TAG, "Nearest " + nearest);
-                return CTAClient.getStopArrival(nearest.getThere());
+                return CTAClient.getStopArrival(nearest.getStops().get(0));
             }
         });
     }

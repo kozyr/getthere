@@ -53,10 +53,7 @@ public final class TrainStationManager {
                 station = new TrainStation(stop);
                 stations.put(stop.getParentStopId(), station);
             } else {
-                if (station.getBack() != null) {
-                    throw new IllegalArgumentException("Extra stop " + stop + " for " + station);
-                }
-                station.setBack(stop);
+                station.addStop(stop);
             }
         }
     }
