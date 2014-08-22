@@ -99,7 +99,6 @@ public class CTAService extends WearableListenerService {
                 return;
             }
         }
-
         // Loop through the events and send a message back to the node that created the data item.
         for (DataEvent event : events) {
             DataItem item = event.getDataItem();
