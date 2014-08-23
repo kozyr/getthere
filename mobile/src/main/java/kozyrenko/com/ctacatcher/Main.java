@@ -104,7 +104,7 @@ public class Main extends Activity {
 
         for (String stopId: grouped.keySet()) {
             for (TrainEta eta: grouped.get(stopId)) {
-                String message = eta.getRoute() + " to " + eta.getDestinationName() + " in " + eta.until() + " minutes";
+                String message = eta.getLine().pretty() + " to " + eta.getDestinationName() + " in " + eta.until() + " minutes";
                 sb.append(message + "\n");
             }
             sb.append("\n");

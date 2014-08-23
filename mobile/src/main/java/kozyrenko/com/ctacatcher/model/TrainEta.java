@@ -164,6 +164,9 @@ public class TrainEta {
         return Minutes.minutesBetween(now, getArrivalTime()).getMinutes();
     }
 
+    public TrainLine getLine() {
+        return TrainLine.from(getRoute());
+    }
 
     @Override
     public String toString() {
