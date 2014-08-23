@@ -4,6 +4,7 @@ import android.util.Log;
 
 import kozyrenko.com.ctacatcher.model.Arrival;
 import kozyrenko.com.ctacatcher.model.Route;
+import kozyrenko.com.ctacatcher.model.TrainStation;
 import kozyrenko.com.ctacatcher.model.TrainStop;
 import retrofit.RestAdapter;
 import retrofit.android.AndroidLog;
@@ -31,6 +32,9 @@ public class CTAClient {
     private interface CTAArrivalService {
         @GET("/ttarrivals.aspx")
         Arrival getStopArrival(@Query("key") String key, @Query("stpid") String stopId);
+
+        @GET("/ttarrivals.aspx")
+        Arrival getStationArrival(@Query("key") String key, @Query("mapid") String stationId);
     }
 
     private static final RestAdapter REST_ADAPTER = new RestAdapter.Builder()
@@ -62,6 +66,20 @@ public class CTAClient {
             public void call(Subscriber<? super Arrival> subscriber) {
                 try {
                     subscriber.onNext(ARRIVAL_SERVICE.getStopArrival(CTA_KEY, stop.getStopId()));
+                    subscriber.onCompleted();
+                } catch (Exception e) {
+                    subscriber.onError(e);
+                }
+            }
+        }).subscribeOn(Schedulers.io());
+    }
+
+    public static Observable<Arrival> getStationArrival(final TrainStation station) {
+        return Observable.create(new Observable.OnSubscribe<Arrival>() {
+            @Override
+            public void call(Subscriber<? super Arrival> subscriber) {
+                try {
+                    subscriber.onNext(ARRIVAL_SERVICE.getStationArrival(CTA_KEY, station.getStationId()));
                     subscriber.onCompleted();
                 } catch (Exception e) {
                     subscriber.onError(e);

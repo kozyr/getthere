@@ -6,6 +6,7 @@ import android.util.Log;
 
 import com.google.android.gms.location.LocationRequest;
 
+import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -30,7 +31,7 @@ public class TrainLocator {
     private Context context;
     private Subscription locator;
 
-    private static final int INITIAL_LOCATION_TIMEOUT = 10000;
+    private static final int INITIAL_LOCATION_TIMEOUT = 5000;
     private static final int LOCATION_UPDATE_INTERVAL = 1000;
     private static final int SUFFICIENT_INITIAL_ACCURACY = 200;
 
@@ -65,13 +66,24 @@ public class TrainLocator {
         });
     }
 
-    public Observable<Arrival> getNextArrival() {
+    public Observable<Arrival> getNextArrival(String stopId) {
         return getMyLocation().flatMap(new Func1<Location, Observable<Arrival>>() {
             @Override
             public Observable<Arrival> call(Location location) {
                 TrainStation nearest = getNearestStation(location);
                 Log.i(TAG, "Nearest " + nearest);
                 return CTAClient.getStopArrival(nearest.getStops().get(0));
+            }
+        });
+    }
+
+    public Observable<Arrival> getNextArrival() {
+        return getMyLocation().flatMap(new Func1<Location, Observable<Arrival>>() {
+            @Override
+            public Observable<Arrival> call(Location location) {
+                TrainStation nearest = getNearestStation(location);
+
+                return CTAClient.getStationArrival(nearest);
             }
         });
     }
@@ -92,7 +104,7 @@ public class TrainLocator {
                 })
                 .timeout(INITIAL_LOCATION_TIMEOUT,
                         TimeUnit.MILLISECONDS,
-                        Observable.from((Location) null),
+                        locationProvider.getLastKnownLocation(),
                         Schedulers.io())
                 .first()
                 .observeOn(Schedulers.io());

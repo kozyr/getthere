@@ -22,16 +22,14 @@ public class Main extends Activity {
 
     private static final String TAG = "Main";
 
-    private TextView first;
-    private TextView second;
+    private TextView arrivalView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
 
-        first = (TextView) findViewById(R.id.first);
-        second = (TextView) findViewById(R.id.second);
+        arrivalView = (TextView) findViewById(R.id.arrival);
     }
 
 
@@ -82,24 +80,15 @@ public class Main extends Activity {
 
     private void showNextArrival(Arrival arrival) {
         Log.i(TAG, "Arrival: " + arrival);
+        StringBuilder sb = new StringBuilder();
         List<TrainEta> etas = arrival.getEtas();
-        int count = 0;
-        for (TrainEta eta : etas) {
 
+        for (TrainEta eta : etas) {
             String message = "Train to " + eta.getDestinationName() + " in " + eta.until() + " minutes";
-            Log.i(TAG, message);
-            switch (count) {
-                case 0:
-                    first.setText(message);
-                    break;
-                case 1:
-                    second.setText(message);
-                    break;
-                default:
-                    return;
-            }
-            count++;
+            sb.append(message + "\n");
         }
+
+        arrivalView.setText(sb.toString());
     }
 
     @Override
