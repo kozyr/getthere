@@ -90,9 +90,9 @@ public class WearCTAService extends WearableListenerService {
             }
         }
 
-        // Loop through the events and send a message back to the node that created the data item.
         for (DataEvent event : events) {
             DataItem item = event.getDataItem();
+            Log.i(TAG, item.toString());
         }
     }
 

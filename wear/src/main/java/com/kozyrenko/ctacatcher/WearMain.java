@@ -4,9 +4,14 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.wearable.view.WatchViewStub;
+import android.util.Log;
 import android.widget.TextView;
 
+import com.kozyrenko.ctacatcher.common.model.TrainStationManager;
+
 public class WearMain extends Activity {
+
+    private static final String TAG = "WearMain";
 
     private TextView mTextView;
 
@@ -21,7 +26,6 @@ public class WearMain extends Activity {
                 mTextView = (TextView) stub.findViewById(R.id.text);
             }
         });
-
 
         Intent findNear = new Intent(this, NearestTrainService.class);
         startService(findNear);

@@ -9,13 +9,17 @@ import android.util.Log;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.PendingResult;
 import com.google.android.gms.common.data.FreezableUtils;
 import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.wearable.DataApi;
 import com.google.android.gms.wearable.DataEvent;
 import com.google.android.gms.wearable.DataEventBuffer;
 import com.google.android.gms.wearable.DataItem;
 import com.google.android.gms.wearable.MessageEvent;
 import com.google.android.gms.wearable.Node;
+import com.google.android.gms.wearable.PutDataMapRequest;
+import com.google.android.gms.wearable.PutDataRequest;
 import com.google.android.gms.wearable.Wearable;
 import com.google.android.gms.wearable.WearableListenerService;
 
@@ -23,6 +27,8 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import com.kozyrenko.ctacatcher.common.model.Arrival;
+import com.kozyrenko.ctacatcher.common.model.TrainEta;
+
 import pl.charmas.android.reactivelocation.ReactiveLocationProvider;
 import rx.Observable;
 import rx.Subscriber;
@@ -80,11 +86,31 @@ public class CTAService extends WearableListenerService {
                     @Override
                     public void onNext(Arrival arrival) {
                         Log.i(TAG, "Arrivals: " + arrival);
+                        sendArrivalToWear(arrival);
                     }
                 });
 
         super.onMessageReceived(messageEvent);
 
+    }
+
+    private void sendArrivalToWear(Arrival arrival) {
+        if(!googleApiClient.isConnected()) {
+            ConnectionResult connectionResult = googleApiClient
+                    .blockingConnect(30, TimeUnit.SECONDS);
+            if (!connectionResult.isSuccess()) {
+                Log.e(TAG, "DataLayerListenerService failed to connect to GoogleApiClient.");
+                return;
+            }
+        }
+        PutDataMapRequest dataMap = PutDataMapRequest.create("/arrival");
+        for (TrainEta eta : arrival.getEtas()) {
+            dataMap.getDataMap().putString("train", eta.getLine().pretty());
+        }
+
+        PutDataRequest request = dataMap.asPutDataRequest();
+        PendingResult<DataApi.DataItemResult> pendingResult = Wearable.DataApi
+                .putDataItem(googleApiClient, request);
     }
 
     @Override
