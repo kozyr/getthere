@@ -8,7 +8,10 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TextView;
 
+import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import kozyrenko.com.ctacatcher.model.Arrival;
 import kozyrenko.com.ctacatcher.model.TrainEta;
@@ -80,12 +83,31 @@ public class Main extends Activity {
 
     private void showNextArrival(Arrival arrival) {
         Log.i(TAG, "Arrival: " + arrival);
-        StringBuilder sb = new StringBuilder();
-        List<TrainEta> etas = arrival.getEtas();
+        Map<String, List<TrainEta>> grouped = new HashMap<String, List<TrainEta>>();
 
-        for (TrainEta eta : etas) {
-            String message = "Train to " + eta.getDestinationName() + " in " + eta.until() + " minutes";
-            sb.append(message + "\n");
+        StringBuilder sb = new StringBuilder();
+
+        boolean addStation = false;
+
+        for (TrainEta eta : arrival.getEtas()) {
+            if (!addStation) {
+                sb.append(eta.getStationName() + "\n");
+                addStation = true;
+            }
+            List<TrainEta> stops = grouped.get(eta.getStopId());
+            if (stops == null) {
+                stops = new LinkedList<TrainEta>();
+                grouped.put(eta.getStopId(), stops);
+            }
+            stops.add(eta);
+        }
+
+        for (String stopId: grouped.keySet()) {
+            for (TrainEta eta: grouped.get(stopId)) {
+                String message = eta.getRoute() + " to " + eta.getDestinationName() + " in " + eta.until() + " minutes";
+                sb.append(message + "\n");
+            }
+            sb.append("\n");
         }
 
         arrivalView.setText(sb.toString());
