@@ -66,13 +66,20 @@ public class TrainLocator {
         });
     }
 
-    public Observable<Arrival> getNextArrival(String stopId) {
+    public Observable<Arrival> getNextArrival(final String stopId) {
         return getMyLocation().flatMap(new Func1<Location, Observable<Arrival>>() {
             @Override
             public Observable<Arrival> call(Location location) {
+                Observable<Arrival> result = Observable.empty();
                 TrainStation nearest = getNearestStation(location);
                 Log.i(TAG, "Nearest " + nearest);
-                return CTAClient.getStopArrival(nearest.getStops().get(0));
+                for (TrainStop stop : nearest.getStops()) {
+                    if (stop.getStopId().equals(stopId)) {
+                        result = CTAClient.getStopArrival(stop);
+                        break;
+                    }
+                }
+                return result;
             }
         });
     }
@@ -82,7 +89,7 @@ public class TrainLocator {
             @Override
             public Observable<Arrival> call(Location location) {
                 TrainStation nearest = getNearestStation(location);
-
+                Log.i(TAG, "Nearest " + nearest);
                 return CTAClient.getStationArrival(nearest);
             }
         });
