@@ -15,6 +15,7 @@ import java.util.Map;
 
 import com.kozyrenko.ctacatcher.common.model.Arrival;
 import com.kozyrenko.ctacatcher.common.model.TrainEta;
+import com.kozyrenko.ctacatcher.common.util.Util;
 import com.kozyrenko.ctacatcher.service.CTAService;
 import com.kozyrenko.ctacatcher.service.TrainLocator;
 import rx.Subscriber;
@@ -83,34 +84,8 @@ public class Main extends Activity {
 
     private void showNextArrival(Arrival arrival) {
         Log.i(TAG, "Arrival: " + arrival);
-        Map<String, List<TrainEta>> grouped = new HashMap<String, List<TrainEta>>();
 
-        StringBuilder sb = new StringBuilder();
-
-        boolean addStation = false;
-
-        for (TrainEta eta : arrival.getEtas()) {
-            if (!addStation) {
-                sb.append(eta.getStationName() + "\n");
-                addStation = true;
-            }
-            List<TrainEta> stops = grouped.get(eta.getStopId());
-            if (stops == null) {
-                stops = new LinkedList<TrainEta>();
-                grouped.put(eta.getStopId(), stops);
-            }
-            stops.add(eta);
-        }
-
-        for (String stopId: grouped.keySet()) {
-            for (TrainEta eta: grouped.get(stopId)) {
-                String message = eta.getLine().pretty() + " to " + eta.getDestinationName() + " in " + eta.until() + " minutes";
-                sb.append(message + "\n");
-            }
-            sb.append("\n");
-        }
-
-        arrivalView.setText(sb.toString());
+        arrivalView.setText(Util.stringifyArrival(arrival));
     }
 
     @Override

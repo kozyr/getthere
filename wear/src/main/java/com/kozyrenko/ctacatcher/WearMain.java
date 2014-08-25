@@ -1,12 +1,17 @@
 package com.kozyrenko.ctacatcher;
 
 import android.app.Activity;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.wearable.view.WatchViewStub;
 import android.util.Log;
 import android.widget.TextView;
 
+import com.kozyrenko.ctacatcher.common.model.DataLayer;
 import com.kozyrenko.ctacatcher.common.model.TrainStationManager;
 
 public class WearMain extends Activity {
@@ -14,6 +19,14 @@ public class WearMain extends Activity {
     private static final String TAG = "WearMain";
 
     private TextView mTextView;
+
+    private BroadcastReceiver messageReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String text = intent.getStringExtra(DataLayer.ARRIVAL_INFO);
+            mTextView.setText(text);
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,7 +40,16 @@ public class WearMain extends Activity {
             }
         });
 
+        LocalBroadcastManager.getInstance(this).registerReceiver(messageReceiver,
+                new IntentFilter(DataLayer.ARRIVAL_PATH));
+
         Intent findNear = new Intent(this, NearestTrainService.class);
         startService(findNear);
+    }
+
+    @Override
+    protected void onDestroy() {
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(messageReceiver);
+        super.onDestroy();
     }
 }

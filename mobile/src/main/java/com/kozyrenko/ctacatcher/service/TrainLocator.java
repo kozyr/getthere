@@ -6,8 +6,6 @@ import android.util.Log;
 
 import com.google.android.gms.location.LocationRequest;
 
-import java.util.LinkedList;
-import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import com.kozyrenko.ctacatcher.common.model.Arrival;
@@ -15,7 +13,7 @@ import com.kozyrenko.ctacatcher.common.model.Route;
 import com.kozyrenko.ctacatcher.common.model.TrainStation;
 import com.kozyrenko.ctacatcher.common.model.TrainStationManager;
 import com.kozyrenko.ctacatcher.common.model.TrainStop;
-import com.kozyrenko.ctacatcher.common.util.GeoUtil;
+
 import pl.charmas.android.reactivelocation.ReactiveLocationProvider;
 import rx.Observable;
 import rx.Subscriber;

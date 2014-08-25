@@ -1,17 +1,11 @@
 package com.kozyrenko.ctacatcher.service;
 
-import android.app.Service;
-import android.content.Intent;
-import android.location.Location;
-import android.net.Uri;
-import android.os.IBinder;
 import android.util.Log;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.PendingResult;
 import com.google.android.gms.common.data.FreezableUtils;
-import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.wearable.DataApi;
 import com.google.android.gms.wearable.DataEvent;
 import com.google.android.gms.wearable.DataEventBuffer;
@@ -27,14 +21,10 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import com.kozyrenko.ctacatcher.common.model.Arrival;
-import com.kozyrenko.ctacatcher.common.model.TrainEta;
+import com.kozyrenko.ctacatcher.common.model.DataLayer;
+import com.kozyrenko.ctacatcher.common.util.Util;
 
-import pl.charmas.android.reactivelocation.ReactiveLocationProvider;
-import rx.Observable;
 import rx.Subscriber;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.functions.Action1;
-import rx.functions.Func1;
 import rx.schedulers.Schedulers;
 
 /**
@@ -103,10 +93,9 @@ public class CTAService extends WearableListenerService {
                 return;
             }
         }
-        PutDataMapRequest dataMap = PutDataMapRequest.create("/arrival");
-        for (TrainEta eta : arrival.getEtas()) {
-            dataMap.getDataMap().putString("train", eta.getLine().pretty());
-        }
+        PutDataMapRequest dataMap = PutDataMapRequest.create(DataLayer.ARRIVAL_PATH);
+
+        dataMap.getDataMap().putString(DataLayer.ARRIVAL_INFO, Util.stringifyArrival(arrival));
 
         PutDataRequest request = dataMap.asPutDataRequest();
         PendingResult<DataApi.DataItemResult> pendingResult = Wearable.DataApi
@@ -134,6 +123,7 @@ public class CTAService extends WearableListenerService {
 
     @Override
     public void onDestroy() {
+        googleApiClient.disconnect();
         super.onDestroy();
     }
 }

@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.kozyrenko.ctacatcher.common.model.TrainStop.Direction;
-import com.kozyrenko.ctacatcher.common.util.GeoUtil;
+import com.kozyrenko.ctacatcher.common.util.Util;
 
 public final class TrainStationManager {
 
@@ -26,7 +26,7 @@ public final class TrainStationManager {
         float min = Float.MAX_VALUE;
         for (String id : stations.keySet()) {
             TrainStation station = stations.get(id);
-            float delta = GeoUtil.distance(station, lat, lon);
+            float delta = Util.distance(station, lat, lon);
 
             if (delta < min) {
                 min = delta;
