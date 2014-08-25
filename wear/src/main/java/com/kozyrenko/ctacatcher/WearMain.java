@@ -14,6 +14,8 @@ import android.widget.TextView;
 import com.kozyrenko.ctacatcher.common.model.DataLayer;
 import com.kozyrenko.ctacatcher.common.model.TrainStationManager;
 
+import net.danlew.android.joda.JodaTimeAndroid;
+
 public class WearMain extends Activity {
 
     private static final String TAG = "WearMain";
@@ -31,6 +33,7 @@ public class WearMain extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        JodaTimeAndroid.init(this);
         setContentView(R.layout.wear_main);
         final WatchViewStub stub = (WatchViewStub) findViewById(R.id.watch_view_stub);
         stub.setOnLayoutInflatedListener(new WatchViewStub.OnLayoutInflatedListener() {

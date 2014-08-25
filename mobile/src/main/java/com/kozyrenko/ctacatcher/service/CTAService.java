@@ -20,6 +20,7 @@ import com.google.android.gms.wearable.WearableListenerService;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+import com.google.gson.Gson;
 import com.kozyrenko.ctacatcher.common.model.Arrival;
 import com.kozyrenko.ctacatcher.common.model.DataLayer;
 import com.kozyrenko.ctacatcher.common.util.Util;
@@ -95,7 +96,8 @@ public class CTAService extends WearableListenerService {
         }
         PutDataMapRequest dataMap = PutDataMapRequest.create(DataLayer.ARRIVAL_PATH);
 
-        dataMap.getDataMap().putString(DataLayer.ARRIVAL_INFO, Util.stringifyArrival(arrival));
+        Gson gson = new Gson();
+        dataMap.getDataMap().putString(DataLayer.ARRIVAL_INFO, gson.toJson(arrival));
 
         PutDataRequest request = dataMap.asPutDataRequest();
         PendingResult<DataApi.DataItemResult> pendingResult = Wearable.DataApi

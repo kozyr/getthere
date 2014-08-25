@@ -22,7 +22,10 @@ import com.google.android.gms.wearable.WearableListenerService;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+import com.google.gson.Gson;
+import com.kozyrenko.ctacatcher.common.model.Arrival;
 import com.kozyrenko.ctacatcher.common.model.DataLayer;
+import com.kozyrenko.ctacatcher.common.util.Util;
 
 /**
  * Created by dev on 8/14/14.
@@ -80,17 +83,19 @@ public class WearCTAService extends WearableListenerService {
                 Log.i(TAG, "path " + path);
                 if (DataLayer.ARRIVAL_PATH.equals(path)) {
                     DataMap dataMap = DataMap.fromByteArray(event.getDataItem().getData());
-                    String arrivalInfo = dataMap.getString(DataLayer.ARRIVAL_INFO);
-                    sendArrivalInfoToUI(arrivalInfo);
+                    String arrivalJson = dataMap.getString(DataLayer.ARRIVAL_INFO);
+                    sendArrivalInfoToUI(arrivalJson);
                 }
 
             }
         }
     }
 
-    private void sendArrivalInfoToUI(String arrivalInfo) {
+    private void sendArrivalInfoToUI(String arrivalJson) {
+        Gson gson = new Gson();
+        Arrival arrival = gson.fromJson(arrivalJson, Arrival.class);
         Intent intent = new Intent(DataLayer.ARRIVAL_PATH);
-        intent.putExtra(DataLayer.ARRIVAL_INFO, arrivalInfo);
+        intent.putExtra(DataLayer.ARRIVAL_INFO, Util.stringifyArrival(arrival));
         LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
     }
 
