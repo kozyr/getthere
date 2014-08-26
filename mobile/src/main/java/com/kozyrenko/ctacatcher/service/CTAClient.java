@@ -1,9 +1,7 @@
 package com.kozyrenko.ctacatcher.service;
 
-import android.util.Log;
-
-import com.kozyrenko.ctacatcher.common.model.Arrival;
-import com.kozyrenko.ctacatcher.common.model.Route;
+import com.kozyrenko.ctacatcher.common.model.TrainArrival;
+import com.kozyrenko.ctacatcher.common.model.TrainRoute;
 import com.kozyrenko.ctacatcher.common.model.TrainStation;
 import com.kozyrenko.ctacatcher.common.model.TrainStop;
 import retrofit.RestAdapter;
@@ -26,15 +24,15 @@ public class CTAClient {
 
     private interface CTAPositionService {
         @GET("/ttpositions.aspx")
-        Route getRoute(@Query("key") String key, @Query("rt") String route);
+        TrainRoute getRoute(@Query("key") String key, @Query("rt") String route);
     }
 
     private interface CTAArrivalService {
         @GET("/ttarrivals.aspx")
-        Arrival getStopArrival(@Query("key") String key, @Query("stpid") String stopId);
+        TrainArrival getStopArrival(@Query("key") String key, @Query("stpid") String stopId);
 
         @GET("/ttarrivals.aspx")
-        Arrival getStationArrival(@Query("key") String key, @Query("mapid") String stationId);
+        TrainArrival getStationArrival(@Query("key") String key, @Query("mapid") String stationId);
     }
 
     private static final RestAdapter REST_ADAPTER = new RestAdapter.Builder()
@@ -46,10 +44,10 @@ public class CTAClient {
     private static final CTAPositionService POSITION_SERVICE = REST_ADAPTER.create(CTAPositionService.class);
     private static final CTAArrivalService ARRIVAL_SERVICE = REST_ADAPTER.create(CTAArrivalService.class);
 
-    public static Observable<Route> getRoute(final String route) {
-        return Observable.create(new Observable.OnSubscribe<Route>() {
+    public static Observable<TrainRoute> getRoute(final String route) {
+        return Observable.create(new Observable.OnSubscribe<TrainRoute>() {
             @Override
-            public void call(Subscriber<? super Route> subscriber) {
+            public void call(Subscriber<? super TrainRoute> subscriber) {
                 try {
                     subscriber.onNext(POSITION_SERVICE.getRoute(CTA_KEY, route));
                     subscriber.onCompleted();
@@ -60,10 +58,10 @@ public class CTAClient {
         }).subscribeOn(Schedulers.io());
     }
 
-    public static Observable<Arrival> getStopArrival(final TrainStop stop) {
-        return Observable.create(new Observable.OnSubscribe<Arrival>() {
+    public static Observable<TrainArrival> getStopArrival(final TrainStop stop) {
+        return Observable.create(new Observable.OnSubscribe<TrainArrival>() {
             @Override
-            public void call(Subscriber<? super Arrival> subscriber) {
+            public void call(Subscriber<? super TrainArrival> subscriber) {
                 try {
                     subscriber.onNext(ARRIVAL_SERVICE.getStopArrival(CTA_KEY, stop.getStopId()));
                     subscriber.onCompleted();
@@ -74,10 +72,10 @@ public class CTAClient {
         }).subscribeOn(Schedulers.io());
     }
 
-    public static Observable<Arrival> getStationArrival(final TrainStation station) {
-        return Observable.create(new Observable.OnSubscribe<Arrival>() {
+    public static Observable<TrainArrival> getStationArrival(final TrainStation station) {
+        return Observable.create(new Observable.OnSubscribe<TrainArrival>() {
             @Override
-            public void call(Subscriber<? super Arrival> subscriber) {
+            public void call(Subscriber<? super TrainArrival> subscriber) {
                 try {
                     subscriber.onNext(ARRIVAL_SERVICE.getStationArrival(CTA_KEY, station.getStationId()));
                     subscriber.onCompleted();

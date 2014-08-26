@@ -2,10 +2,9 @@ package com.kozyrenko.ctacatcher.common.util;
 
 import android.location.Location;
 
-import com.kozyrenko.ctacatcher.common.model.Arrival;
+import com.kozyrenko.ctacatcher.common.model.TrainArrival;
 import com.kozyrenko.ctacatcher.common.model.TrainEta;
 import com.kozyrenko.ctacatcher.common.model.TrainStation;
-import com.kozyrenko.ctacatcher.common.model.TrainStop;
 
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -24,7 +23,7 @@ public class Util {
         return results[0];
     }
 
-    public static String stringifyArrival(Arrival arrival) {
+    public static String stringifyArrival(TrainArrival arrival) {
         Map<String, List<TrainEta>> grouped = new HashMap<String, List<TrainEta>>();
 
         StringBuilder sb = new StringBuilder();

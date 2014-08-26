@@ -21,9 +21,8 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import com.google.gson.Gson;
-import com.kozyrenko.ctacatcher.common.model.Arrival;
+import com.kozyrenko.ctacatcher.common.model.TrainArrival;
 import com.kozyrenko.ctacatcher.common.model.DataLayer;
-import com.kozyrenko.ctacatcher.common.util.Util;
 
 import rx.Subscriber;
 import rx.schedulers.Schedulers;
@@ -64,7 +63,7 @@ public class CTAService extends WearableListenerService {
         Log.i(TAG, "Received message!");
         trainLocator.getNextArrival()
                 .observeOn(Schedulers.io())
-                .subscribe(new Subscriber<Arrival>() {
+                .subscribe(new Subscriber<TrainArrival>() {
                     @Override
                     public void onCompleted() {
                     }
@@ -75,7 +74,7 @@ public class CTAService extends WearableListenerService {
                     }
 
                     @Override
-                    public void onNext(Arrival arrival) {
+                    public void onNext(TrainArrival arrival) {
                         Log.i(TAG, "Arrivals: " + arrival);
                         sendArrivalToWear(arrival);
                     }
@@ -85,7 +84,7 @@ public class CTAService extends WearableListenerService {
 
     }
 
-    private void sendArrivalToWear(Arrival arrival) {
+    private void sendArrivalToWear(TrainArrival arrival) {
         if(!googleApiClient.isConnected()) {
             ConnectionResult connectionResult = googleApiClient
                     .blockingConnect(30, TimeUnit.SECONDS);

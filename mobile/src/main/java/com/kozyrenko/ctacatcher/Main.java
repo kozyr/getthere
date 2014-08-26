@@ -8,13 +8,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TextView;
 
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-
-import com.kozyrenko.ctacatcher.common.model.Arrival;
-import com.kozyrenko.ctacatcher.common.model.TrainEta;
+import com.kozyrenko.ctacatcher.common.model.TrainArrival;
 import com.kozyrenko.ctacatcher.common.util.Util;
 import com.kozyrenko.ctacatcher.service.CTAService;
 import com.kozyrenko.ctacatcher.service.TrainLocator;
@@ -64,7 +58,7 @@ public class Main extends Activity {
         TrainLocator locator = new TrainLocator(this);
         locator.getNextArrival()
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Subscriber<Arrival>() {
+                .subscribe(new Subscriber<TrainArrival>() {
                     @Override
                     public void onCompleted() { }
 
@@ -74,7 +68,7 @@ public class Main extends Activity {
                     }
 
                     @Override
-                    public void onNext(Arrival arrival) {
+                    public void onNext(TrainArrival arrival) {
                         showNextArrival(arrival);
                     }
                 });
@@ -82,7 +76,7 @@ public class Main extends Activity {
         super.onStart();
     }
 
-    private void showNextArrival(Arrival arrival) {
+    private void showNextArrival(TrainArrival arrival) {
         Log.i(TAG, "Arrival: " + arrival);
 
         arrivalView.setText(Util.stringifyArrival(arrival));

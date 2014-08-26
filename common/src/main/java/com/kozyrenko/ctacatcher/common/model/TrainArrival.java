@@ -9,7 +9,7 @@ import java.util.List;
  * Created by dev on 8/17/14.
  */
 @Root(name="ctatt", strict = false)
-public class Arrival {
+public class TrainArrival {
     @ElementList(inline = true)
     private List<TrainEta> etas;
 

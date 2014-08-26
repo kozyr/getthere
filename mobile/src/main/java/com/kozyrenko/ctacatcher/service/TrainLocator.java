@@ -8,8 +8,8 @@ import com.google.android.gms.location.LocationRequest;
 
 import java.util.concurrent.TimeUnit;
 
-import com.kozyrenko.ctacatcher.common.model.Arrival;
-import com.kozyrenko.ctacatcher.common.model.Route;
+import com.kozyrenko.ctacatcher.common.model.TrainArrival;
+import com.kozyrenko.ctacatcher.common.model.TrainRoute;
 import com.kozyrenko.ctacatcher.common.model.TrainStation;
 import com.kozyrenko.ctacatcher.common.model.TrainStationManager;
 import com.kozyrenko.ctacatcher.common.model.TrainStop;
@@ -41,13 +41,13 @@ public class TrainLocator {
 
 
     public void showRoute(final String route) {
-        getMyLocation().flatMap(new Func1<Location, Observable<Route>>() {
+        getMyLocation().flatMap(new Func1<Location, Observable<TrainRoute>>() {
             @Override
-            public Observable<Route> call(Location location) {
+            public Observable<TrainRoute> call(Location location) {
                 return CTAClient.getRoute(route);
             }
         })
-        .subscribe(new Subscriber<Route>() {
+        .subscribe(new Subscriber<TrainRoute>() {
             @Override
             public void onCompleted() {
             }
@@ -58,17 +58,17 @@ public class TrainLocator {
             }
 
             @Override
-            public void onNext(Route route) {
+            public void onNext(TrainRoute route) {
                 Log.i(TAG, "Route: " + route);
             }
         });
     }
 
-    public Observable<Arrival> getNextArrival(final String stopId) {
-        return getMyLocation().flatMap(new Func1<Location, Observable<Arrival>>() {
+    public Observable<TrainArrival> getNextArrival(final String stopId) {
+        return getMyLocation().flatMap(new Func1<Location, Observable<TrainArrival>>() {
             @Override
-            public Observable<Arrival> call(Location location) {
-                Observable<Arrival> result = Observable.empty();
+            public Observable<TrainArrival> call(Location location) {
+                Observable<TrainArrival> result = Observable.empty();
                 TrainStation nearest = getNearestStation(location);
                 Log.i(TAG, "Nearest " + nearest);
                 for (TrainStop stop : nearest.getStops()) {
@@ -82,10 +82,10 @@ public class TrainLocator {
         });
     }
 
-    public Observable<Arrival> getNextArrival() {
-        return getMyLocation().flatMap(new Func1<Location, Observable<Arrival>>() {
+    public Observable<TrainArrival> getNextArrival() {
+        return getMyLocation().flatMap(new Func1<Location, Observable<TrainArrival>>() {
             @Override
-            public Observable<Arrival> call(Location location) {
+            public Observable<TrainArrival> call(Location location) {
                 TrainStation nearest = getNearestStation(location);
                 Log.i(TAG, "Nearest " + nearest);
                 return CTAClient.getStationArrival(nearest);

@@ -8,7 +8,7 @@ import org.simpleframework.xml.Root;
  * Created by dev on 8/16/14.
  */
 @Root(name="ctatt", strict = false)
-public class Route {
+public class TrainRoute {
     @Element
     private TrainList route;
 

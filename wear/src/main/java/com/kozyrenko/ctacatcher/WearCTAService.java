@@ -23,7 +23,7 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import com.google.gson.Gson;
-import com.kozyrenko.ctacatcher.common.model.Arrival;
+import com.kozyrenko.ctacatcher.common.model.TrainArrival;
 import com.kozyrenko.ctacatcher.common.model.DataLayer;
 import com.kozyrenko.ctacatcher.common.util.Util;
 
@@ -93,7 +93,7 @@ public class WearCTAService extends WearableListenerService {
 
     private void sendArrivalInfoToUI(String arrivalJson) {
         Gson gson = new Gson();
-        Arrival arrival = gson.fromJson(arrivalJson, Arrival.class);
+        TrainArrival arrival = gson.fromJson(arrivalJson, TrainArrival.class);
         Intent intent = new Intent(DataLayer.ARRIVAL_PATH);
         intent.putExtra(DataLayer.ARRIVAL_INFO, Util.stringifyArrival(arrival));
         LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
