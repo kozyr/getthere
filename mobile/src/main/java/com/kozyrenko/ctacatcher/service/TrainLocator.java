@@ -9,6 +9,7 @@ import com.google.android.gms.location.LocationRequest;
 import java.util.concurrent.TimeUnit;
 
 import com.kozyrenko.ctacatcher.common.model.TrainArrival;
+import com.kozyrenko.ctacatcher.common.model.TrainArrivalRequest;
 import com.kozyrenko.ctacatcher.common.model.TrainRoute;
 import com.kozyrenko.ctacatcher.common.model.TrainStation;
 import com.kozyrenko.ctacatcher.common.model.TrainStationManager;
@@ -83,6 +84,17 @@ public class TrainLocator {
     }
 
     public Observable<TrainArrival> getNextArrival() {
+        return getMyLocation().flatMap(new Func1<Location, Observable<TrainArrival>>() {
+            @Override
+            public Observable<TrainArrival> call(Location location) {
+                TrainStation nearest = getNearestStation(location);
+                Log.i(TAG, "Nearest " + nearest);
+                return CTAClient.getStationArrival(nearest);
+            }
+        });
+    }
+
+    public Observable<TrainArrival> getNextArrival(TrainArrivalRequest request) {
         return getMyLocation().flatMap(new Func1<Location, Observable<TrainArrival>>() {
             @Override
             public Observable<TrainArrival> call(Location location) {

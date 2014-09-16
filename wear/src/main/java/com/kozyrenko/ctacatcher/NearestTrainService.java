@@ -15,6 +15,10 @@ import com.google.android.gms.wearable.MessageApi;
 import com.google.android.gms.wearable.Node;
 import com.google.android.gms.wearable.NodeApi;
 import com.google.android.gms.wearable.Wearable;
+import com.google.gson.Gson;
+import com.kozyrenko.ctacatcher.common.model.DataLayer;
+import com.kozyrenko.ctacatcher.common.model.TrainArrivalRequest;
+import com.kozyrenko.ctacatcher.common.model.TrainLine;
 
 import java.util.Collection;
 import java.util.HashSet;
@@ -28,8 +32,6 @@ public class NearestTrainService extends IntentService
         implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
 
     private GoogleApiClient mGoogleApiClient;
-
-    public static final String NEAREST_TRAIN_PATH = "/train/nearest";
 
     private static final String TAG = "NearestTrainService";
 
@@ -53,10 +55,16 @@ public class NearestTrainService extends IntentService
 
         if (mGoogleApiClient.isConnected()) {
             Set<String> nodeIds = getNodes();
+            TrainArrivalRequest request = new TrainArrivalRequest(TrainLine.BROWN);
+            Gson gson = new Gson();
             for (String nodeId : nodeIds) {
                 Log.i(TAG, "Sending to " + nodeId);
+
                 MessageApi.SendMessageResult result = Wearable.MessageApi.sendMessage(
-                        mGoogleApiClient, nodeId, NEAREST_TRAIN_PATH, "red".getBytes()).await();
+                        mGoogleApiClient,
+                        nodeId,
+                        DataLayer.ARRIVAL_REQUEST,
+                        gson.toJson(request).getBytes()).await();
                 if (!result.getStatus().isSuccess()) {
                     Log.e(TAG, "ERROR: failed to send Message: " + result.getStatus());
                 }

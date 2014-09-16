@@ -23,6 +23,7 @@ import java.util.concurrent.TimeUnit;
 import com.google.gson.Gson;
 import com.kozyrenko.ctacatcher.common.model.TrainArrival;
 import com.kozyrenko.ctacatcher.common.model.DataLayer;
+import com.kozyrenko.ctacatcher.common.model.TrainArrivalRequest;
 
 import rx.Subscriber;
 import rx.schedulers.Schedulers;
@@ -61,7 +62,20 @@ public class CTAService extends WearableListenerService {
     @Override
     public void onMessageReceived(MessageEvent messageEvent) {
         Log.i(TAG, "Received message!");
-        trainLocator.getNextArrival()
+        String path = messageEvent.getPath();
+        if (DataLayer.ARRIVAL_REQUEST.equals(path)) {
+            processArrivalRequest(messageEvent.getSourceNodeId(), new String(messageEvent.getData()));
+        }
+
+        super.onMessageReceived(messageEvent);
+
+    }
+
+    private void processArrivalRequest(String sourceNodeId, String requestJson) {
+        Gson gson = new Gson();
+        TrainArrivalRequest request = gson.fromJson(requestJson, TrainArrivalRequest.class);
+        Log.i(TAG, "Request arrived " + request);
+        trainLocator.getNextArrival(request)
                 .observeOn(Schedulers.io())
                 .subscribe(new Subscriber<TrainArrival>() {
                     @Override
@@ -79,9 +93,6 @@ public class CTAService extends WearableListenerService {
                         sendArrivalToWear(arrival);
                     }
                 });
-
-        super.onMessageReceived(messageEvent);
-
     }
 
     private void sendArrivalToWear(TrainArrival arrival) {
